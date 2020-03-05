@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 /* tslint:disable:no-console */
-import 'rc-swipeout/assets/index.less';
+import '@gem-mine/rc-swipeout/assets/index.less';
 import Swipeout from '../src/';
 import React from 'react';
 import ReactDOM from 'react-dom';

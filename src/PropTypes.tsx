@@ -5,8 +5,8 @@ interface IPropTypes {
   right?: Array<{ text: React.ReactNode; onPress?: () => void; type?: any; style?: any; className?: string}>;
   open?: boolean;
   autoClose?: boolean;
-  onOpen?: () => void;
-  onClose?: () => void;
+  onOpen?: (open: boolean) => void;
+  onClose?: (open: boolean) => void;
   disabled?: boolean;
   style?: any;
   /* web only */

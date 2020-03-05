@@ -5,14 +5,28 @@ import Swipeout from '../src/';
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-ReactDOM.render(
-  <div style={{ marginBottom: 12 }}>
-    <Swipeout
+class Demo extends React.Component {
+
+  state = {
+    open: true
+  };
+
+  onClick = () => {
+    this.setState({open: !this.state.open});
+  }
+
+  render() {
+    return (
+      <div style={{ marginBottom: 12 }}>
+        <a onClick={this.onClick}>swipe</a>
+      <Swipeout
       style={{ backgroundColor: 'white' }}
-      autoClose
+      open={this.state.open}
       right={[
         { text: 'more',
-          onPress: () => console.log('more'),
+          onPress: () => {
+            this.setState({open: false});
+          },
           style: { backgroundColor: 'orange', color: 'white' },
         },
         { text: 'delete',
@@ -34,6 +48,13 @@ ReactDOM.render(
       }}
       >swipe out simple demo</div>
     </Swipeout>
-  </div>,
+    </div>
+    );
+  }
+
+}
+
+ReactDOM.render(
+  <Demo />,
   document.getElementById('__react-content'),
 );

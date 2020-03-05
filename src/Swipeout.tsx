@@ -30,6 +30,16 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
     onClose() {},
   };
 
+  static getDerivedStateFromProps (props, state) {
+    // 当用户不设置open时 open为undefined
+    if (props.open && !state.open) {
+      state.open = !state.open;
+    } else if (props.open === false && state.open) {
+      state.open = !state.open;
+    }
+    return state;
+  }
+
   openedLeft: boolean;
   openedRight: boolean;
   content: any;
@@ -46,7 +56,7 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
     super(props);
     this.state = {
       swiping: false,
-      open: null
+      open: null,
     };
     this.openedLeft = false;
     this.openedRight = false;
@@ -55,19 +65,19 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
   componentDidMount() {
     this.btnsLeftWidth = this.left ? this.left.offsetWidth : 0;
     this.btnsRightWidth = this.right ? this.right.offsetWidth : 0;
-    const { open, disabled } = this.props
-    if(typeof(open) !== undefined){
-      this.setState({
-        open,
-        disabled:true,
-        ready:true
-      })
-    }
+    this.renderOpenState();
+    // todo Unable to preventDefault inside passive event listener due to target being treated as passive.
+    // { passive: false } 会造成点击失败
     document.body.addEventListener('touchstart', this.onCloseSwipe, true);
   }
 
   componentWillUnmount() {
+    console.info('componentWillUnmount');
     document.body.removeEventListener('touchstart', this.onCloseSwipe, true);
+  }
+
+  componentDidUpdate() {
+    this.renderOpenState();
   }
 
   onCloseSwipe = (ev) => {
@@ -81,22 +91,10 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
     }
   }
 
-  static getDerivedStateFromProps (props, state) {
-    // 当用户不设置open时 open为undefined
-    console.log(props, state)
-    if(props.open === true && (state.open === false || state.open === null)){
-      state.open = true
-    }
-    if(props.open === false && state.open === true){
-      state.open = false
-    }
-    return state
-  }
-
   needAutoClose = () => {
-    const { open } = this.props
-    if(typeof(open) === undefined) {
-      this.close()
+    const { isControlled } = this;
+    if (!isControlled()) {
+      this.close();
     }
   }
 
@@ -110,7 +108,7 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
     if (!isLeft && !isRight) {
       return;
     }
-    const { left, right, open } = this.props;
+    const { left, right } = this.props;
     this.needShowRight = isLeft && right!.length > 0;
     this.needShowLeft = isRight && left!.length > 0;
     if (this.left) {
@@ -210,7 +208,7 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
 
   open = (value, openedLeft, openedRight) => {
     if (!this.openedLeft && !this.openedRight && this.props.onOpen) {
-      this.props.onOpen();
+      this.props.onOpen(true);
     }
 
     this.openedLeft = openedLeft;
@@ -220,7 +218,7 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
 
   close = () => {
     if ((this.openedLeft || this.openedRight) && this.props.onClose) {
-      this.props.onClose();
+      this.props.onClose(false);
     }
     this._setStyle(0);
     this.openedLeft = false;
@@ -232,7 +230,7 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
     return (buttons && buttons.length) ? (
       <div
         className={`${prefixCls}-actions ${prefixCls}-actions-${ref}`}
-        style={{ height:'inherit' }}
+        style={{ height: 'inherit' }}
         ref={(el) => this[ref] = el}
       >
         {
@@ -257,16 +255,25 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
     }
   }
 
-  render() {
-    const { prefixCls, left, right, children, ...restProps } = this.props;
+  isControlled = () => {
+    return typeof(this.props.open) === 'boolean';
+  }
 
-    const { open: openState, ready, disabled } = this.state
-    if(openState === true && ready){
-      this.doOpenRight()
+  renderOpenState(){
+    if (!this.isControlled()) return;
+    const { open } = this.props;
+    if (open === true) {
+      this.doOpenRight();
     }
-    if(openState === false && ready){
-      this.close()
+    if (open === false) {
+      this.close();
     }
+  }
+
+  setRef = (el) => this.content = ReactDOM.findDOMNode(el);
+
+  render() {
+    const { prefixCls, left, right, children, disabled, ...restProps } = this.props;
 
     const { autoClose, onOpen, onClose, ...divProps } = restProps;
 
@@ -274,12 +281,9 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
       [`${prefixCls}-swiping`]: this.state.swiping,
     });
 
-    const refProps = {
-      ref: el => this.content = ReactDOM.findDOMNode(el),
-    };
-
-    return (left!.length || right!.length) && !disabled ? (
-      <div className={cls} {...divProps} >
+    if ((left!.length || right!.length) && !disabled && !this.isControlled()){
+      return (
+        <div className={cls} {...divProps} >
         {/* 保证 body touchStart 后不触发 pan */}
         <div className={`${prefixCls}-cover`} ref={(el) => this.cover = el} />
         { this.renderButtons(left, 'left') }
@@ -293,17 +297,23 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
           onSwipeLeft={this.doOpenRight}
           onSwipeRight={this.doOpenLeft}
           direction="horizontal"
-          {...refProps}
+          ref = {this.setRef}
         >
           <div className={`${prefixCls}-content`}>{children}</div>
         </Gesture>
      </div>
-    ) : (
-      <div style={{ position: 'relative' }}>
-        { this.renderButtons(left, 'left') }
-        { this.renderButtons(right, 'right') }
-        <div className={`${prefixCls}-content`} {...refProps} {...divProps}>{children}</div>
-      </div>
-    );
+      );
+    }else {
+      return (
+        <div className={cls}  style={{ position: 'relative' }}>
+        <div className={`${prefixCls}-cover`} ref={(el) => this.cover = el} />
+         { this.renderButtons(left, 'left') }
+         { this.renderButtons(right, 'right') }
+         <div ref = {this.setRef} className={`${prefixCls}-content`}>
+           <div>{children}</div>
+         </div>
+       </div>
+      );
+    }
   }
 }

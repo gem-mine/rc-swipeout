@@ -1,7 +1,7 @@
 {
-  "name": "rc-swipeout",
-  "version": "2.0.11",
-  "description": "swipe out ui component for react(web and react-native)",
+  "name": "@gem-mine/rc-swipeout",
+  "version": "1.0.0",
+  "description": "swipe out ui component for react",
   "keywords": [
     "react",
     "react-component",
@@ -9,28 +9,18 @@
     "rc-swipeout",
     "swipe delete"
   ],
-  "homepage": "https://github.com/react-component/swipeout",
-  "author": "rjmuqiang@gmail.com",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/react-component/swipeout.git"
-  },
-  "bugs": {
-    "url": "https://github.com/react-component/swipeout/issues"
-  },
   "files": [
     "lib",
     "es",
     "dist",
     "assets/*.css"
   ],
-  "licenses": "MIT",
   "main": "./lib/index",
   "module": "./es/index",
   "config": {
     "port": 8000,
     "entry": {
-      "rc-swipeout": [
+      "@gem-mine/rc-swipeout": [
         "./index.js",
         "./assets/index.less"
       ]
@@ -49,7 +39,6 @@
     "test": "rc-test run test",
     "chrome-test": "rc-test run chrome-test",
     "coverage": "rc-test run coverage",
-    "rn-start": "node node_modules/react-native/local-cli/cli.js start",
     "prepublish": "rc-tools run guard",
     "prepare": "rc-tools run guard",
     "prepublishOnly": "rc-tools run guard"
@@ -57,22 +46,18 @@
   "dependencies": {
     "babel-runtime": "6.x",
     "classnames": "2.x",
-    "rc-gesture": "~0.0.22",
-    "react-native-swipeout": "^2.2.2"
+    "rc-gesture": "~0.0.22"
   },
   "devDependencies": {
     "@types/mocha": "~2.2.32",
     "@types/react": "latest",
     "@types/react-dom": "latest",
-    "@types/react-native": "latest",
     "expect.js": "0.3.x",
     "pre-commit": "1.x",
     "rc-test": "~6.0.3",
     "rc-tools": "6.x",
     "react": "^16.0.0",
     "react-dom": "^16.0.0",
-    "react-native": "~0.55.4",
-    "react-native-index-page": "~0.2.0",
     "react-navigation": "1.0.0-beta.12"
   },
   "typings": "./lib/index.d.ts",
