@@ -72,7 +72,6 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
   }
 
   componentWillUnmount() {
-    console.info('componentWillUnmount');
     document.body.removeEventListener('touchstart', this.onCloseSwipe, true);
   }
 
@@ -259,8 +258,8 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
     return typeof(this.props.open) === 'boolean';
   }
 
-  renderOpenState(){
-    if (!this.isControlled()) return;
+  renderOpenState() {
+    if (!this.isControlled()) {return; }
     const { open } = this.props;
     if (open === true) {
       this.doOpenRight();
@@ -281,7 +280,7 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
       [`${prefixCls}-swiping`]: this.state.swiping,
     });
 
-    if ((left!.length || right!.length) && !disabled && !this.isControlled()){
+    if ((left!.length || right!.length) && !disabled && !this.isControlled()) {
       return (
         <div className={cls} {...divProps} >
         {/* 保证 body touchStart 后不触发 pan */}

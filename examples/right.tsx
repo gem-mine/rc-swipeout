@@ -8,7 +8,7 @@ import ReactDOM from 'react-dom';
 class Demo extends React.Component {
 
   state = {
-    open: true
+    open: true,
   };
 
   onClick = () => {

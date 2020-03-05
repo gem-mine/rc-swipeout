@@ -15,6 +15,7 @@
     "dist",
     "assets/*.css"
   ],
+  "license": "MIT",
   "main": "./lib/index",
   "module": "./es/index",
   "config": {
