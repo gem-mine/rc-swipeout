@@ -80,12 +80,9 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
   }
 
   onCloseSwipe = (ev) => {
-    if (!(this.openedLeft || this.openedRight)) {
-      return;
-    }
+    ev.preventDefault();
     const pNode = closest(ev.target, `.${this.props.prefixCls}-actions`);
     if (!pNode) {
-      ev.preventDefault();
       this.needAutoClose();
     }
   }
@@ -143,11 +140,22 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
       return;
     }
 
-    const { moveStatus } = e;
+    const { moveStatus, direction } = e;
     const { x: deltaX } = moveStatus;
+    const isLeft = direction === 2;
+    const isRight = direction === 4;
 
-    const needOpenRight = this.needShowRight && Math.abs(deltaX) > this.btnsRightWidth / 2;
-    const needOpenLeft = this.needShowLeft && Math.abs(deltaX) > this.btnsLeftWidth / 2;
+    if (!isLeft && !isRight) {
+      return;
+    }
+    // 当松开时拖动方向和onPadStart相反时, 也不应该打开左右任一菜单
+    const { left, right } = this.props;
+    let needShowRight = isLeft && right!.length > 0;
+    let needShowLeft = isRight && left!.length > 0;
+    needShowRight = this.needShowRight && this.needShowRight === needShowRight;
+    needShowLeft = this.needShowLeft && this.needShowLeft === needShowLeft;
+    const needOpenRight = needShowRight && Math.abs(deltaX) > this.btnsRightWidth / 2;
+    const needOpenLeft = needShowLeft && Math.abs(deltaX) > this.btnsLeftWidth / 2;
 
     if (needOpenRight) {
       this.doOpenRight();
