@@ -80,7 +80,7 @@ export default class Swipeout extends React.Component <SwipeoutPropType, any> {
   }
 
   onCloseSwipe = (ev) => {
-    ev.preventDefault();
+    // ev.preventDefault();
     const pNode = closest(ev.target, `.${this.props.prefixCls}-actions`);
     if (!pNode) {
       this.needAutoClose();
