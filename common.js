@@ -1571,7 +1571,7 @@ var Swipeout = function (_React$Component) {
         var _this = __WEBPACK_IMPORTED_MODULE_4_babel_runtime_helpers_possibleConstructorReturn___default()(this, (Swipeout.__proto__ || Object.getPrototypeOf(Swipeout)).call(this, props));
 
         _this.onCloseSwipe = function (ev) {
-            ev.preventDefault();
+            // ev.preventDefault();
             var pNode = closest(ev.target, '.' + _this.props.prefixCls + '-actions');
             if (!pNode) {
                 _this.needAutoClose();
